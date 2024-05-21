@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>나를 귀찮게 하지마!</title>
+		<style>
+			* {
+				margin: 0;
+				padding: 0;
+				box-sizing: border-box;
+			}
+			@font-face {
+				font-family: 'PartialSansKR-Regular';
+				src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2307-1@1.1/PartialSansKR-Regular.woff2')
+					format('woff2');
+				font-weight: normal;
+				font-style: normal;
+			}
+			@font-face {
+				font-family: 'KIMM_Bold';
+				src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2212@1.0/KIMM_Bold.woff2')
+					format('woff2');
+				font-weight: 700;
+				font-style: normal;
+			}
+			@font-face {
+				font-family: 'SBAggroB';
+				src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2108@1.1/SBAggroB.woff')
+					format('woff');
+				font-weight: normal;
+				font-style: normal;
+			}
+			textarea {
+				width: 50%;
+				height: 800px;
+				padding: 10px;
+				font-family: Arial, sans-serif;
+				font-size: 14px;
+				border: 1px solid #ccc;
+				border-radius: 4px;
+				box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+			}
+			main {
+				display: flex;
+				flex-direction: column;
+				padding: 2rem;
+			}
+		</style>
+	</head>
+	<body>
+		<main>
+			<!-- <li>개발자 도구를 킨다</li>
+			<li>logs라고 되어있는 줄에서 오른쪽 마우스 클릭을 한다</li>
+			<li>code fetch를 복사한다</li> -->
+			<ul>
+				<li>css link를 지운다</li>
+				<li>이미지 경로를 지운다</li>
+			</ul>
+			<textarea id="api-textarea"></textarea>
+			<button onclick="applyChanges()">적용하기!</button>
+		</main>
+		<script>
+			let apiInfo = '';
+			const textarea = document.getElementById('api-textarea');
+			textarea.value = apiInfo;
+
+			// 사용자가 textarea에서 글자를 수정할 수 있도록 기본 설정
+			textarea.addEventListener('input', (event) => {
+				apiInfo = event.target.value;
+				console.log('Updated apiInfo:', apiInfo);
+			});
+			function applyChanges() {
+				const parser = new DOMParser();
+				const doc = parser.parseFromString(apiInfo, 'text/html');
+
+				// Remove all link elements except for roulette.css
+				const links = doc.querySelectorAll('link[rel="stylesheet"]');
+				links.forEach((link) => {
+					if (!link.href.includes('rouletter.css')) {
+						const parent = link.parentNode;
+						parent.removeChild(link);
+
+						// Remove the newline character after removing the link element
+						let nextSibling = link.nextSibling;
+						while (
+							nextSibling &&
+							nextSibling.nodeType === Node.TEXT_NODE &&
+							nextSibling.nodeValue.trim() === ''
+						) {
+							parent.removeChild(nextSibling);
+							nextSibling = link.nextSibling; // Update the reference to the next sibling node
+						}
+					}
+				});
+				doc.normalize();
+
+				// Remove src attributes from all img elements
+				const images = doc.querySelectorAll('img');
+				images.forEach((img) => {
+					const src = img.getAttribute('src');
+					if (src) {
+						const fileName = src.split('/').pop(); // Extract the filename and extension
+						img.setAttribute('src', fileName);
+					}
+
+					const alt = img.getAttribute('alt');
+					if ((alt && alt.includes('확인하기')) || alt.includes('제출하기')) {
+						const button = img.closest('button');
+						if (button) {
+							// Copy button classes to the image
+							button.classList.forEach((className) => {
+								img.classList.add(className);
+							});
+							// Remove button classes from the button
+							button.removeAttribute('class');
+
+							// Set data-login_type attribute
+							img.setAttribute('data-login_type', 'kb_call');
+						}
+						// Additional changes for alt containing "확인하기" or "제출하기"
+						if (alt && alt.includes('확인하기')) {
+							img.classList.add('btn-result');
+						} else if (alt && alt.includes('제출하기')) {
+							img.classList.add('btn-evtjoin-kb');
+						}
+					}
+					if (alt && alt.includes('로그인하기')) {
+						img.closest('button').classList.add('btn-login');
+					}
+					switch (alt) {
+						case 'KB스타뱅킹 고객정보 바로가기':
+							img
+								.closest('a')
+								.setAttribute(
+									'href',
+									'https://obank.kbstar.com/quics?page=C041244&scheme=kbbank&pageid=D001268&adbrix'
+								);
+							break;
+						case 'KB스타뱅킹 쿠폰함 바로가기':
+							img
+								.closest('a')
+								.setAttribute(
+									'href',
+									'https://obank.kbstar.com/quics?page=C041244&scheme=kbbank&pageid=D005151&adbrix'
+								);
+							break;
+						case '국민지갑 및 포인트 약관 동의하러가기':
+							img
+								.closest('a')
+								.setAttribute(
+									'href',
+									'https://obank.kbstar.com/quics?page=C041244&scheme=kbbank&pageid=D007792'
+								);
+							break;
+						case 'Wallet포인트 이용안내':
+							img
+								.closest('a')
+								.setAttribute(
+									'href',
+									'https://www.lguplus.com/benefit-event/ongoing/387?pageNo=1&sortBaseCd=N&tabId='
+								);
+							break;
+					}
+				});
+
+				const btnCloseElements = doc.querySelectorAll('.btn-evt-close');
+				btnCloseElements.forEach((element) => {
+					element.classList.add('btn-back');
+				});
+
+				// Add 'btn-share' class to elements with 'btn-evt-share' class
+				const btnShareElements = doc.querySelectorAll('.btn-evt-share');
+				btnShareElements.forEach((element) => {
+					element.classList.add('btn-shareevt');
+				});
+
+				doc.querySelectorAll('script').forEach((script) => {
+					script.innerText = '';
+				});
+
+				// Serialize the document back to a string and update the textarea
+				const serializer = new XMLSerializer();
+				apiInfo = serializer.serializeToString(doc);
+				// apiInfo = apiInfo.replace(/>\s+</g, '><');
+				textarea.value = apiInfo;
+				console.log('Updated apiInfo:', apiInfo);
+			}
+		</script>
+	</body>
+</html>

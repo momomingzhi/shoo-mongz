@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"path": "."
+		},
+		{
+			"path": "../bfm02-kbland-user-pub"
+		}
+	],
+	"settings": {
+		"liveServer.settings.port": 8082
+	}
+}

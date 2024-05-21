@@ -1,0 +1,43 @@
+{
+	"workbench.colorTheme": "Material Theme Deepforest",
+	"files.autoSave": "afterDelay",
+	"security.workspace.trust.untrustedFiles": "open",
+	"liveServer.settings.useLocalIp": true,
+	"liveServer.settings.port": 8080,
+	"workbench.tree.indent": 4,
+	"prettier.useTabs": true,
+	"eslint.alwaysShowStatus": true,
+	"eslint.format.enable": true,
+	"eslint.workingDirectories": [
+		{
+			"mode": "auto"
+		}
+	],
+	"eslint.validate": ["javascript"],
+	"editor.codeActionsOnSave": {
+		"source.fixAll": "explicit"
+	},
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+	"prettier.singleQuote": true,
+	"prettier.vueIndentScriptAndStyle": true,
+	"workbench.panel.defaultLocation": "left",
+	"window.restoreWindows": "one",
+	"liveServer.settings.donotShowInfoMsg": true,
+	"editor.formatOnSave": true,
+	"files.autoSaveDelay": 1000,
+	"liveServer.settings.fullReload": true,
+	"git.openRepositoryInParentFolders": "never",
+	"css.enabledLanguages": [
+		"html",
+		"javascriptreact",
+		"typescriptreact",
+		"typescript",
+		"javascript",
+		"njk",
+		"nunjucks",
+		"html-nunjucks",
+		"php"
+	],
+	"workbench.iconTheme": "eq-material-theme-icons-light",
+	"materialTheme.accent": "Orange"
+}
