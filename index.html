@@ -31,34 +31,128 @@
 				font-weight: normal;
 				font-style: normal;
 			}
-			textarea {
-				width: 50%;
-				height: 800px;
-				padding: 10px;
-				font-family: Arial, sans-serif;
-				font-size: 14px;
-				border: 1px solid #ccc;
-				border-radius: 4px;
-				box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+
+			body {
+				font-family: 'KIMM_Bold', Arial, sans-serif;
+				background-color: #f8f9fa;
+				color: #333;
+			}
+			h1 {
+				margin: 2cap auto;
+				text-align: center;
 			}
 			main {
-				display: flex;
-				flex-direction: column;
+				max-width: 800px;
+				margin: 2cap auto;
 				padding: 2rem;
+				background-color: #fff;
+				border-radius: 8px;
+				box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+			}
+
+			ul {
+				margin-bottom: 20px;
+			}
+
+			button {
+				padding: 12px 24px;
+				font-size: 16px;
+				border: none;
+				background-color: #007bff;
+				color: #fff;
+				cursor: pointer;
+				border-radius: 8px;
+				transition: background-color 0.3s ease;
+				font-family: 'KIMM_Bold', Arial, sans-serif;
+				margin: 0 0.5rem 0 0;
+			}
+
+			button:hover {
+				background-color: #0056b3;
+			}
+
+			.flex-button-container {
+				display: flex;
+				align-items: center;
+				margin-bottom: 20px;
+			}
+
+			.flex-container {
+				display: flex;
+				justify-content: space-between;
+				align-items: center;
+				margin-bottom: 20px;
+			}
+
+			#api-textarea {
+				width: calc(50% - 12px);
+				height: 400px;
+				padding: 12px;
+				font-size: 16px;
+				border: 1px solid #ccc;
+				border-radius: 8px;
+				box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+				resize: none;
+			}
+
+			#api-output {
+				width: calc(50% - 12px);
+				height: 400px;
+				padding: 12px;
+				border: 1px solid #ccc;
+				border-radius: 8px;
+				box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+				overflow-y: auto;
+			}
+
+			.copy-btn {
+				padding: 12px 24px;
+				font-size: 16px;
+				background-color: #6c757d;
+				color: #fff;
+				border-radius: 8px;
+				transition: background-color 0.3s ease;
+			}
+
+			.copy-btn:hover {
+				background-color: #5a6268;
+			}
+			ul ul {
+				margin-left: 20px; /* 내부 ul의 왼쪽 여백 추가 */
+				margin-top: 5px;
+				font-size: 14px;
+				line-height: 15px;
 			}
 		</style>
 	</head>
 	<body>
+		<h1>이벤트를 만나 내 삶에 이벤트가 생겼다</h1>
 		<main>
 			<!-- <li>개발자 도구를 킨다</li>
 			<li>logs라고 되어있는 줄에서 오른쪽 마우스 클릭을 한다</li>
 			<li>code fetch를 복사한다</li> -->
 			<ul>
-				<li>css link를 지운다</li>
+				<li>css link 태그를 지운다</li>
 				<li>이미지 경로를 지운다</li>
+				<li>class에 필요한 기능을 붙여준다</li>
+				<ul>
+					<li>닫기, 공유하기에 btn-back, btn-shareevt 추가</li>
+					<li>확인하기에 btn-result, img 태그 안에 data-login_type 추가</li>
+					<li>제출하기에 btn-evtjoin-kb, img 태그 안에 data-login_type 추가</li>
+					<li>로그인하기에 btn-login 추가</li>
+				</ul>
 			</ul>
-			<textarea id="api-textarea"></textarea>
-			<button onclick="applyChanges()">적용하기!</button>
+			<div class="flex-button-container">
+				<button onclick="applyChanges()">적용하기!</button>
+				<button onclick="reset()">다시하기</button>
+				<button class="copy-btn" onclick="copyTextToClipboard()">
+					결과물 복사
+				</button>
+			</div>
+			<div class="flex-container">
+				<textarea id="api-textarea" oninput="showOutput()"></textarea>
+				<div id="api-output"></div>
+			</div>
 		</main>
 		<script>
 			let apiInfo = '';
@@ -81,15 +175,15 @@
 						const parent = link.parentNode;
 						parent.removeChild(link);
 
-						// Remove the newline character after removing the link element
 						let nextSibling = link.nextSibling;
 						while (
 							nextSibling &&
 							nextSibling.nodeType === Node.TEXT_NODE &&
 							nextSibling.nodeValue.trim() === ''
 						) {
-							parent.removeChild(nextSibling);
-							nextSibling = link.nextSibling; // Update the reference to the next sibling node
+							const current = nextSibling;
+							nextSibling = current.nextSibling; // Update the reference to the next sibling node
+							parent.removeChild(current);
 						}
 					}
 				});
@@ -183,8 +277,33 @@
 				const serializer = new XMLSerializer();
 				apiInfo = serializer.serializeToString(doc);
 				// apiInfo = apiInfo.replace(/>\s+</g, '><');
-				textarea.value = apiInfo;
+				// textarea.value = apiInfo;
+				document.getElementById('api-output').innerText = apiInfo;
 				console.log('Updated apiInfo:', apiInfo);
+			}
+			function reset() {
+				document.getElementById('api-output').innerText = '';
+			}
+			function copyTextToClipboard() {
+				const textToCopy = document.getElementById('api-output').innerText;
+
+				// Create a textarea element to hold the text temporarily
+				const textarea = document.createElement('textarea');
+				textarea.value = textToCopy;
+				document.body.appendChild(textarea);
+
+				// Select the text inside the textarea
+				textarea.select();
+				textarea.setSelectionRange(0, 99999); // For mobile devices
+
+				// Copy the selected text to the clipboard
+				document.execCommand('copy');
+
+				// Remove the temporary textarea
+				document.body.removeChild(textarea);
+
+				// Provide some feedback to the user
+				alert('복사 완료');
 			}
 		</script>
 	</body>
